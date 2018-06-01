@@ -1,0 +1,80 @@
+php artisan config:clear
+php artisan cache:clear
+php artisan config:cache
+    Limpa o cache dos arquivos de configuração
+
+php artisan tinker
+    factory(App\User::class, 20)->create()
+    Cria 20 registros fakes e os insere no banco.
+
+php artisan make:factory PostFactory
+php artisan make:factory PostFactory --model=PostFactory
+    Já cria referenciando a model especificada
+
+php artisan make:request UserRequest
+
+Kernel.php
+    método RedirectIfAuthenticated para alterar onde redireciona se autenticado
+
+    no Handler.php, procurar método 'unaunthenticated' p/ redirecionar para outra página, se não autenticado
+
+php artisan make:middleware MyAuth
+    Cria um middleware. Salvo na pasta app/http/Middleware
+
+php artisan make:mail RegistrationEmail
+    Vai criar uma pasta Mail no /app
+    mailtrap simula o envio de emails.
+
+    Pegar as informações abaixo no próprio mailtrap (logar, ir na inbox)
+    MAIL_DRIVER=smtp
+    MAIL_HOST=smtp.mailtrap.io
+    MAIL_PORT=465
+    MAIL_USERNAME=96cd45355cc86c
+    MAIL_PASSWORD=33d4cf196a9fbd
+    MAIL_ENCRYPTION=null
+
+    Rodar comando abaixo no Tinker
+    \Mail::to('xandecar@hotmail.com')->send(new App\Mail\RegistrationEmail)
+
+    Se der merda, faça:
+        em config/mail.php, substituir pelas linhas não comentadas abaixo
+        // 'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+        'host' => env('MAIL_HOST'),
+
+        // 'port' => env('MAIL_PORT', 465),
+        'port' => env('MAIL_PORT'),
+
+        php artisan config:clear
+        php artisan cache:clear
+        php artisan config:cache
+
+        e tente enviar novamente o email
+
+php artisan make:mail Registration --markdown=registration
+
+Criar evento e listener:
+    php artisan make:event Registration
+    php artisan make:listener RegistrationListener
+
+    Ir no EventServiceProvider e ligar o evento com o listener
+        protected $listen = [
+            'App\Events\Registration' => [
+                'App\Listeners\RegistrationListener',
+            ],
+        ];
+    No tinker:
+        event(new App\Events\Registration)
+    
+    É possível criar automaticamente os eventos e listeners!
+        Antes, ir no EventServiceProvider e inserir o evento e listener
+            'App\Events\Cadastro' => [
+                'App\Listeners\CadastroListener',
+            ],
+        Depois, só rodar o comando:
+            php artisan event:generate
+
+php artisan make:provider BindServiceProvider
+    Pra ñ precisar fazer assim no arq de rotas
+        App::bind('App\Contracts\RepoInterface', 'App\Repos\Post');
+    ir tbm no config/app.php e adicionar
+        App\Providers\BindServiceProvider::class,
